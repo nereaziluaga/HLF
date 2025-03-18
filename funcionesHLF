@@ -1,0 +1,147 @@
+def crear_tablero():
+    return [[" " for _ in range(10)] for _ in range(10)]
+"""
+    Esta función genera tableros de 10x10 que serán utilizados en los 4 tableros del juego
+"""
+
+
+
+def calcular_vidas(tablero):
+    vidas = 0
+    for i in range(10):
+        for j in range(10):
+            if tablero[i][j] == "B":
+                vidas += 1
+    return vidas
+"""
+    Esta función servirá para finalizar el juego. Para ello, hace una revisión de las "B" 
+    que hay en el tablero de barcos y por cada una de ellas nos devuelve una oportunidad de juego
+"""
+
+
+
+def disparo_ordenador (tablero_jugadora, i,j):
+    if tablero_jugadora [i][j]=="B":
+        print("Tocado")
+        tablero_jugadora [i][j]="x"
+        tablero_vista_ordenador[i][j]="x"
+        return True
+    elif tablero_jugadora [i][j]==" ":
+        print ("Agua")
+        tablero_jugadora [i][j]="o"
+        tablero_vista_ordenador[i][j]="o"
+        return False
+    else:
+        print ("Disparo efectuado anteriormente")
+        return False
+    
+def disparo_jugadora (tablero_ordenador, i,j):
+    if tablero_ordenador [i][j]=="B":
+        print("Tocado")
+        tablero_ordenador [i][j]="x"
+        tablero_vista_jugadora[i][j]="x"
+        return True
+    elif tablero_ordenador [i][j]==" ":
+        print ("Agua")
+        tablero_ordenador [i][j]="o"
+        tablero_vista_jugadora[i][j]="o"
+        return False
+    else:
+        print ("Disparo efectuado anteriormente")
+        return False
+"""
+    Esta función servirá para saber lo que debe devolver cada disparo efectuado. 
+    Si toca B, devolverá TOCADO y si toca "" devolverá AGUA.
+    Además, definimos que tocado es True, por lo que el jugador tendrá una tirada más.
+    Por otro lado, Agua o coordenadas que ya se habían disparado anteriormente devolverán
+    False. Lo que utilizaremos para decir que es el turno del otro jugador.
+"""
+
+
+def pedir_coordenada_i():
+    while True:
+        try:
+            i = int(input("¡Hola, grumete! Introduce la coordenada i (de 1 a 10): "))
+            if 1 <= i <= 10:
+                return i - 1  #Hay que restar 1 a los números para que concuerde con el índice. 
+            else:
+                print("¡Ay, la leche! Recuerda que el número tiene que ser entre 1 y 10.")
+        except ValueError:
+            print("Introduce un número válido, grumete.")
+
+def pedir_coordenada_j():
+    while True:
+        try:
+            j = int(input("Introduce la coordenada j (de 1 a 10): "))
+            if 1 <= j <= 10:
+                return j - 1  #Hay que restar 1 a los números para que concuerde con el índice como en la coordenada i. 
+            else:
+                print("¡Ay, la leche! Recuerda que el número tiene que ser entre 1 y 10.")
+        except ValueError:
+            print("Introduce un número válido, marinero de agua dulce.")
+"""
+    Esta función sirve para pedir las coordenadas (i,j) necesarias para realizar los disparos. 
+    Se pide al jugador que las introduzca a través de un input.
+    Además, pasamos las coordenadas a número entero porque el input nos lo devuelve en str,
+    Por último, hay que tener en cuenta que el índice de las listas va de 0 a 9, por lo que
+    hay que restar 1 a los números introducido para que concuerde con el índice. 
+"""
+
+
+def turno_jugadora():
+    print("\n--- Es el turno de la Jugadora ---")
+    while True:
+        i = pedir_coordenada_i()
+        j = pedir_coordenada_j()
+        if disparo_jugadora(tablero_ordenador, i, j):
+            # Si es tocado, se siue jugando
+            continue
+        else:
+            # Si agua o else, pasa turno
+            break     
+         
+def turno_ordenador ():
+     print("\n--- Es el turno del ordenador ---")
+     while True:
+        i = pedir_coordenada_i()
+        j = pedir_coordenada_j()
+        if disparo_ordenador(tablero_jugadora, i, j):
+            # Si es tocado, se siue jugando
+            continue
+        else:
+            # Si agua o else, pasa turno
+            break 
+"""
+    Esta función sirve para definir cómo será cada turno y la forma de pasar de un turno a otro.
+"""   
+
+
+def jugar():
+    print("En las tormentosas aguas del Mar Cantábrico, la Casa Ziluaga se prepara para enfrentarse a su más temido enemigo: el Señor de Python. En sus majestuosos barcos, las guerreroas de la Casa Ziluaga afilan sus espadas y cargan sus cañones, listos para la batalla. La lucha será feroz, no solo de fuerza, sino de astucia, pues cada disparo puede marcar la diferencia entre la victoria o la derrota. El Señor de Python, con sus habilidades de código como escudo, no dará tregua, y en este duelo de ingenio y destreza, solo una podrá reclamar la gloria. ¡Que los vientos del Cantábrico soplen a favor de la más audaz, pues en este océano de incertidumbre, ni el más mínimo error será perdonado!")
+    print("Pon a punto los cañones que esto va a empezar. Recuerda que el objetivo del juego es hundir todos los barcos del oponente. BOOOOOOOOOM.")
+    print("Las instrucciones del juego:")
+    print("1. El juego se alterna entre tu turno y el turno del ordenador.")
+    print("2. En tu turno, se te pedirá que introduzcas las coordenadas de disparo.")
+
+    while True:
+        #Turno de la jugadora
+        turno_jugadora()
+
+        # Mostrar el tablero de vista después del turno de la jugadora
+        print("\nTablero de la Jugadora:")
+        print(tabulate(tablero_vista_jugadora, stralign="center", tablefmt="rounded_grid"))
+
+        if calcular_vidas(tablero_ordenador) == 0:
+            print("\n¡Felicidades, has ganado! El ordenador (Señor de Python) ha sido derrotado.")
+            break
+        
+        # Turno del ordenador
+        turno_ordenador()
+
+        # Mostrar el tablero de vista después del turno del ordenador
+        print("\nTablero del Ordenador (Vista):")
+        print(tabulate(tablero_vista_ordenador, stralign="center", tablefmt="rounded_grid"))
+
+        if calcular_vidas(tablero_jugadora) == 0:
+            print("\n¡oh, no! Has perdido. El ordenador, alias Señor de Python, ha ganado.")
+            break
